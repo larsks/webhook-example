@@ -10,8 +10,11 @@ resources:
 - imagestream.yaml
 
 secretGenerator:
-  - name: github-webhook-secret
+  - name: github-buildconfig-secret
     options:
       disableNameSuffixHash: true
     files:
-      - WebHookSecretKey=secrets/github-webhook-secret
+      - WebHookSecretKey=secrets/github-buildconfig-secret
+  - name: github-notification-secret
+    files:
+      - FLASK_GITHUB_WEBHOOK_SECRET=secrets/github-notification-secret

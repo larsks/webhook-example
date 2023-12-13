@@ -11,12 +11,9 @@ spec:
       containers:
         - name: webhook-receiver
           image: webhook-receiver:latest
-          env:
-            - name: FLASK_GITHUB_WEBHOOK_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: github-webhook-secret
-                  key: WebHookSecretKey
+          envFrom:
+            - secretRef:
+                name: github-notification-secret
           ports:
             - name: http
               containerPort: 8080
