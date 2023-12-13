@@ -2,6 +2,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webhook-receiver
+  annotations:
+    image.openshift.io/triggers: |
+      [
+       {
+         "from": {
+           "kind": "ImageStreamTag", 
+           "name": "webhook-receiver",
+         },
+         "fieldPath": "spec.template.spec.containers[?(@.name==\"webhook-receiver\")].image", 
+         "paused": false
+       }
+      ]
+
 spec:
   template:
     metadata:
