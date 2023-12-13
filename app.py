@@ -16,8 +16,10 @@ def create_app(config_from_env=True):
     @app.route("/hook/push", methods=["POST"])
     def handle_push_notification():
         if 'GITHUB_WEBHOOK_SECRET' not in current_app.config:
+            current_app.logger.error("secret has not been configured")
             abort(400, "Secret has not been configured")
         if "X-Hub-Signature-256" not in request.headers:
+            current_app.logger.error("request is missing signature")
             abort(400, "Request is missing signature")
         sigheader = request.headers["X-Hub-Signature-256"]
         try:
