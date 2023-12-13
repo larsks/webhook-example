@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webhook-receiver
+  annotations:
+    route.openshift.io/termination: edge
+spec:
+  rules:
+  - host: webhook-receiver.apps.shift.nerc.mghpcc.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: webhook-receiver
+            port:
+              name: http
+        path: /
+        pathType: Prefix

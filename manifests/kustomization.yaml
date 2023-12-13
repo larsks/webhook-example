@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  app: webhook-receiver
+resources:
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+- buildconfig.yaml
+- imagestream.yaml
+
+secretGenerator:
+  - name: github-webhook-secret
+    options:
+      disableNameSuffixHash: true
+    files:
+      - WebHookSecretKey=secrets/github-webhook-secret

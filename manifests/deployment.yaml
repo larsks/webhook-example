@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-receiver
+spec:
+  template:
+    metadata:
+      annotations:
+        alpha.image.policy.openshift.io/resolve-names: '*'
+    spec:
+      containers:
+        - name: webhook-receiver
+          image: webhook-receiver:latest
+          env:
+            - name: FLASK_GITHUB_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: github-webhook-secret
+                  key: WebHookSecretKey
+          ports:
+            - name: http
+              containerPort: 8080

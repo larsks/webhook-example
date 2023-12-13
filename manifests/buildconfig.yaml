@@ -1,0 +1,29 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: webhook-receiver
+spec:
+  failedBuildsHistoryLimit: 5
+  output:
+    to:
+      kind: ImageStreamTag
+      name: webhook-receiver:latest
+  source:
+    type: Git
+    contextDir: /
+    git:
+      uri: https://github.com/larsks/webhook-example.git
+  strategy:
+    dockerStrategy:
+      dockerfilePath: Containerfile
+      from:
+        kind: DockerImage
+        name: docker.io/python:3
+    type: Docker
+  successfulBuildsHistoryLimit: 5
+  triggers:
+  - type: ConfigChange
+  - type: GitHub
+    github:
+      secretReference:
+        name: github-webhook-secret
