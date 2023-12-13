@@ -13,6 +13,7 @@ spec:
     contextDir: /
     git:
       uri: https://github.com/larsks/webhook-example.git
+      ref: main
   strategy:
     dockerStrategy:
       dockerfilePath: Containerfile
