@@ -83,15 +83,16 @@ class SlackDividerBlock(SlackBlock):
 
 @dataclass
 class SlackAttachment(jsonObject):
-    blocks: list[SlackBlock]
+    blocks: list[SlackBlock] | None = None
     color: str | None = None
+    text: str | None = None
 
 
 @dataclass
 class SlackMessage(jsonObject):
     text: str | None = None
-    attachments: list[SlackAttachment] = field(default_factory=list)
-    blocks: list[SlackBlock] = field(default_factory=list)
+    attachments: list[SlackAttachment] | None = None
+    blocks: list[SlackBlock] | None = None
 
 
 @dataclass
