@@ -40,6 +40,10 @@ def create_app(config_from_env=True, config=None):
     else:
         app.verifier = github.GithubNullVerifier()
 
+    @app.route("/healthz", methods=["GET"])
+    def healthz():
+        return "OK"
+
     @app.route("/hook/push", methods=["POST"])
     def handle_push_notification():
         try:
