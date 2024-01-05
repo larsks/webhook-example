@@ -27,4 +27,4 @@ spec:
   - type: GitHub
     github:
       secretReference:
-        name: github-buildconfig-secret
+        name: github-buildconfig

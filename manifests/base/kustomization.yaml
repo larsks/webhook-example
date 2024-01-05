@@ -13,7 +13,7 @@ configurations:
   - nameReference.yaml
 
 secretGenerator:
-  - name: github-buildconfig-secret
+  - name: github-buildconfig
     literals:
     - WebHookSecretKey=UPDATE_IN_OVERLAY
   - name: webhook-receiver
