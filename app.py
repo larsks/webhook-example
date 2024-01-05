@@ -87,7 +87,7 @@ def create_app(config_from_env=True, config=None):
 
         commit_list = []
         for commit in request.json.get("commits", []):
-            commit_list.append(f"- <{commit['url']}|{commit['id'][:10]}>")
+            commit_list.append(f"- {commit['message'].splitlines()[0]} <{commit['url']}|{commit['id'][:10]}>")
 
         message.blocks.append(
             slack.SlackSectionBlock(
