@@ -43,10 +43,12 @@ def create_app(config_from_env=True, config=None):
     @app.route("/hook/push", methods=["POST"])
     def handle_push_notification():
         try:
-            app.verifier.verify_webhook_signature(request)
+            current_app.verifier.verify_webhook_signature(request)
         except github.WebhookSignatureError as err:
-            app.logger.error(f"invalid signature: {err}")
+            current_app.logger.error(f"invalid signature: {err}")
             abort(400, "Bad signature")
+
+        current_app.logger.info("received valid notification from github")
 
         if "compare" in request.json:
             patchres = requests.get(f"{request.json['compare']}.patch")
