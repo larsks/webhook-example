@@ -53,7 +53,7 @@ def create_app(config_from_env=True, config=None):
             app.logger.error(f"invalid signature: {err}")
             abort(400, "Bad signature")
 
-        if 'compare' in request.json:
+        if "compare" in request.json:
             patchres = requests.get(f"{request.json['compare']}.patch")
             patchres.raise_for_status()
             patchtext = patchres.text
@@ -83,6 +83,17 @@ def create_app(config_from_env=True, config=None):
                 ),
             ],
         )
+
+        if "commits" in request.json:
+            commit_list = []
+            for commit in request.json["commits"]:
+                commit_list.append(f"- <{commit['url']}|{commit['id'][:10]}>")
+
+            message.blocks.append(
+                slack.SlackSectionBlock(
+                    text=slack.SlackMarkdown(text="\n".join(commit_list))
+                )
+            )
 
         if current_app.notifier:
             try:
