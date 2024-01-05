@@ -54,6 +54,12 @@ def create_app(config_from_env=True, config=None):
             patchres = requests.get(f"{request.json['compare']}.patch")
             patchres.raise_for_status()
             patchtext = patchres.text
+
+            # A text block has a max length of 3000 characters. Ensure
+            # we never even come close by truncating patch text to
+            # 1000 characters.
+            if len(patchtext) > 1000:
+                patchtext = patchtext[:1000] + "\n.\n.\n.\n"
         else:
             patchtext = ""
 
