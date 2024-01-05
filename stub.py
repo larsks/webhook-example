@@ -31,6 +31,4 @@ message = slack.SlackMessage(
 )
 
 print(message.asjson(indent=2, ignore_none=True))
-
-notifier = slack.SlackNotifier(os.environ["SLACK_WEBHOOK"])
-notifier.notify(message)
+notifier = slack.SlackNotifier(os.environ["FLASK_SLACK_WEBHOOK_URL"])
