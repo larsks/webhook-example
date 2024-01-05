@@ -52,8 +52,13 @@ def create_app(config_from_env=True, config=None):
                 app.logger.error(f"invalid signature: {err}")
                 abort(400, "Bad signature")
 
-        patchres = requests.get(f"{request.json['compare']}.patch")
-        patchres.raise_for_status()
+        if 'compare' in request.json:
+            patchres = requests.get(f"{request.json['compare']}.patch")
+            patchres.raise_for_status()
+            patchtext = patchres.text
+        else:
+            patchtext = ""
+
         repo = request.json["repository"]
 
         message = slack.SlackMessage(
@@ -71,7 +76,7 @@ def create_app(config_from_env=True, config=None):
                 slack.SlackAttachment(
                     blocks=[
                         slack.SlackSectionBlock(
-                            text=slack.SlackMarkdown(text=f"```\n{patchres.text}\n```")
+                            text=slack.SlackMarkdown(text=f"```\n{patchtext}\n```")
                         ),
                     ]
                 ),

@@ -15,6 +15,7 @@ secretGenerator:
       disableNameSuffixHash: true
     files:
       - WebHookSecretKey=secrets/github-buildconfig-secret
-  - name: github-notification-secret
+  - name: webhook-receiver
     files:
       - FLASK_GITHUB_WEBHOOK_SECRET=secrets/github-notification-secret
+      - FLASK_SLACK_WEBHOOK_URL=secrets/slack-webhook-url
