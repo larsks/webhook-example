@@ -37,6 +37,8 @@ def create_app(config_from_env=True, config=None):
         app.verifier = github.GithubSignatureVerifier(
             app.config["GITHUB_WEBHOOK_SECRET"]
         )
+    else:
+        app.verifier = github.GithubNullVerifier()
 
     @app.errorhandler(ConfigurationError)
     def log_config_error(err):
@@ -45,12 +47,11 @@ def create_app(config_from_env=True, config=None):
 
     @app.route("/hook/push", methods=["POST"])
     def handle_push_notification():
-        if app.config["VERIFY_WEBHOOK_SIGNATURE"]:
-            try:
-                app.verifier.verify_webhook_signature(request)
-            except github.WebhookSignatureError as err:
-                app.logger.error(f"invalid signature: {err}")
-                abort(400, "Bad signature")
+        try:
+            app.verifier.verify_webhook_signature(request)
+        except github.WebhookSignatureError as err:
+            app.logger.error(f"invalid signature: {err}")
+            abort(400, "Bad signature")
 
         if 'compare' in request.json:
             patchres = requests.get(f"{request.json['compare']}.patch")

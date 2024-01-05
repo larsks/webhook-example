@@ -10,6 +10,11 @@ class WebhookSignatureError(Exception):
     pass
 
 
+class GithubNullVerifier:
+    def verify_webhook_signature(self, request: flask.Request) -> bool:
+        return True
+
+
 class GithubSignatureVerifier:
     def __init__(self, secret: str):
         self.secret = secret.encode()

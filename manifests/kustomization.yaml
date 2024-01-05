@@ -17,5 +17,5 @@ secretGenerator:
       - WebHookSecretKey=secrets/github-buildconfig-secret
   - name: webhook-receiver
     files:
-      - FLASK_GITHUB_WEBHOOK_SECRET=secrets/github-notification-secret
+      - FLASK_GITHUB_WEBHOOK_SECRET=secrets/github-webhook-secret
       - FLASK_SLACK_WEBHOOK_URL=secrets/slack-webhook-url
