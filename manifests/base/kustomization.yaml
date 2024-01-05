@@ -11,12 +11,3 @@ resources:
 
 configurations:
   - nameReference.yaml
-
-secretGenerator:
-  - name: github-buildconfig
-    literals:
-    - WebHookSecretKey=UPDATE_IN_OVERLAY
-  - name: webhook-receiver
-    literals:
-    - FLASK_GITHUB_WEBHOOK_SECRET=UPDATE_IN_OVERLAY
-    - FLASK_SLACK_WEBHOOK_URL=UPDATE_IN_OVERLAY
