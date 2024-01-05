@@ -4,32 +4,47 @@ import json
 import enum
 
 
-# via https://stackoverflow.com/a/60124334/147356
-def remove_none(value):
-    """
-    Recursively remove all None values from dictionaries and lists, and returns
-    the result as a new dictionary or list.
-    """
-    if isinstance(value, list):
-        return [remove_none(x) for x in value if x is not None]
-    elif isinstance(value, dict):
-        return {key: remove_none(val) for key, val in value.items() if val is not None}
-    else:
-        return value
-
-
 class SlackException(Exception):
     pass
 
 
 class SlackTextType(enum.StrEnum):
+    """Valid types for text blocks"""
+
     PLAIN_TEXT = "plain_text"
     MARKDOWN = "mrkdwn"
 
 
+class SlackBlockType(enum.StrEnum):
+    """Valid block types"""
+
+    SECTION = "section"
+    HEADER = "header"
+    DIVIDER = "divider"
+
+
 class jsonObject:
+    @classmethod
+    def remove_none(cls, value):
+        """
+        Recursively remove all None values from dictionaries and lists, and returns
+        the result as a new dictionary or list.
+
+        via https://stackoverflow.com/a/60124334/147356
+        """
+        if isinstance(value, list):
+            return [cls.remove_none(x) for x in value if x is not None]
+        elif isinstance(value, dict):
+            return {
+                key: cls.remove_none(val)
+                for key, val in value.items()
+                if val is not None
+            }
+        else:
+            return value
+
     def asdict(self, ignore_none=False):
-        return remove_none(asdict(self))
+        return self.remove_none(asdict(self))
 
     def asjson(self, ignore_none=False, **kwargs):
         return json.dumps(self.asdict(ignore_none=ignore_none), **kwargs)
@@ -73,17 +88,18 @@ class SlackTextField(SlackField):
 class SlackSectionBlock(SlackBlock):
     text: SlackMarkdown | SlackText | None = None
     fields: list[SlackField] | None = None
-    type: str = "section"
+    type: SlackBlockType = SlackBlockType.SECTION
+
 
 @dataclass
 class SlackHeaderBlock(SlackBlock):
     text: SlackText
-    type: str = "header"
+    type: SlackBlockType = SlackBlockType.HEADER
 
 
 @dataclass
 class SlackDividerBlock(SlackBlock):
-    type: str = "divider"
+    type: SlackBlockType = SlackBlockType.DIVIDER
 
 
 @dataclass
@@ -105,9 +121,9 @@ class SlackNotifier(jsonObject):
     notify_url: str
 
     def notify(self, message: SlackMessage):
-        content = message.asdict(ignore_none=True)
+        """Send a notification via a slack webhook url"""
 
-        print(json.dumps(content, indent=2))
+        content = message.asdict(ignore_none=True)
 
         res = requests.post(self.notify_url, json=content)
         try:

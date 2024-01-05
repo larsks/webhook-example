@@ -1,21 +1,19 @@
 import flask
 import hmac
-import logging
 
 SIGNATURE_HEADER = "X-Hub-Signature-256"
-LOG = logging.getLogger(__name__)
 
 
 class WebhookSignatureError(Exception):
     pass
 
 
-class GithubNullVerifier:
-    def verify_webhook_signature(self, request: flask.Request) -> bool:
-        return True
-
-
 class GithubSignatureVerifier:
+    """Implement webhook request validation as described in [1].
+
+    [1]: https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries
+    """
+
     def __init__(self, secret: str):
         self.secret = secret.encode()
 
@@ -44,4 +42,11 @@ class GithubSignatureVerifier:
                 f"bad signature: request {request_signature}, local {local_signature.hexdigest()}",
             )
 
+        return True
+
+
+class GithubNullVerifier:
+    """A null verifier that is always successful."""
+
+    def verify_webhook_signature(self, request: flask.Request) -> bool:
         return True
