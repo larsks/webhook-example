@@ -50,6 +50,7 @@ def create_app(config_from_env=True, config=None):
 
         current_app.logger.info("received valid notification from github")
 
+        patchtext = ""
         if "compare" in request.json:
             patchres = requests.get(f"{request.json['compare']}.patch")
             patchres.raise_for_status()
@@ -60,11 +61,12 @@ def create_app(config_from_env=True, config=None):
             # 1000 characters.
             if len(patchtext) > 1000:
                 patchtext = patchtext[:1000] + "\n.\n.\n.\n"
-        else:
-            patchtext = ""
 
         repo = request.json["repository"]
         sender = request.json["sender"]
+
+        if "X-GitHub-Event" not in request.headers:
+            abort(400, "Missing x-github-event header")
 
         if request.headers["X-GitHub-Event"] == "ping":
             return {"status": "ping successful"}
@@ -83,7 +85,10 @@ def create_app(config_from_env=True, config=None):
                     )
                 ),
             ],
-            attachments=[
+        )
+
+        if patchtext:
+            message.attachments = [
                 slack.SlackAttachment(
                     blocks=[
                         slack.SlackSectionBlock(
@@ -91,8 +96,7 @@ def create_app(config_from_env=True, config=None):
                         ),
                     ]
                 ),
-            ],
-        )
+            ]
 
         commit_list = []
         for commit in request.json.get("commits", []):
@@ -100,11 +104,12 @@ def create_app(config_from_env=True, config=None):
                 f"- {commit['message'].splitlines()[0]} (<{commit['url']}|{commit['id'][:10]}>)"
             )
 
-        message.blocks.append(
-            slack.SlackSectionBlock(
-                text=slack.SlackMarkdown(text="\n".join(commit_list))
+        if commit_list:
+            message.blocks.append(
+                slack.SlackSectionBlock(
+                    text=slack.SlackMarkdown(text="\n".join(commit_list))
+                )
             )
-        )
 
         if current_app.notifier:
             try:
