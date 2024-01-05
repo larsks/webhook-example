@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  app: webhook-receiver
+
+resources:
+- ../../base
+
+patches:
+- patch: |
+    apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      name: webhook-receiver
+    spec:
+      source:
+        git:
+          uri: https://github.com/larsks/webhook-example.git
+
+secretGenerator:
+- name: github-buildconfig-secret
+  behavior: replace
+  files:
+  - WebHookSecretKey=github-buildconfig-secret
+- name: webhook-receiver
+  behavior: replace
+  files:
+  - FLASK_GITHUB_WEBHOOK_SECRET=github-webhook-secret
+  - FLASK_SLACK_WEBHOOK_URL=slack-webhook-url

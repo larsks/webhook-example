@@ -3,7 +3,7 @@ kind: BuildConfig
 metadata:
   name: webhook-receiver
 spec:
-  failedBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 3
   output:
     to:
       kind: ImageStreamTag
@@ -12,7 +12,7 @@ spec:
     type: Git
     contextDir: /
     git:
-      uri: https://github.com/larsks/webhook-example.git
+      uri: UPDATE_IN_OVERLAY
       ref: main
   strategy:
     dockerStrategy:
@@ -21,7 +21,7 @@ spec:
         kind: DockerImage
         name: docker.io/python:3
     type: Docker
-  successfulBuildsHistoryLimit: 5
+  successfulBuildsHistoryLimit: 3
   triggers:
   - type: ConfigChange
   - type: GitHub

@@ -9,13 +9,14 @@ resources:
 - buildconfig.yaml
 - imagestream.yaml
 
+configurations:
+  - nameReference.yaml
+
 secretGenerator:
   - name: github-buildconfig-secret
-    options:
-      disableNameSuffixHash: true
-    files:
-      - WebHookSecretKey=secrets/github-buildconfig-secret
+    literals:
+    - WebHookSecretKey=UPDATE_IN_OVERLAY
   - name: webhook-receiver
-    files:
-      - FLASK_GITHUB_WEBHOOK_SECRET=secrets/github-webhook-secret
-      - FLASK_SLACK_WEBHOOK_URL=secrets/slack-webhook-url
+    literals:
+    - FLASK_GITHUB_WEBHOOK_SECRET=UPDATE_IN_OVERLAY
+    - FLASK_SLACK_WEBHOOK_URL=UPDATE_IN_OVERLAY
