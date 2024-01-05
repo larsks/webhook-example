@@ -27,4 +27,4 @@ spec:
   - type: GitHub
     github:
       secretReference:
-        name: github-webhook-secret
+        name: github-buildconfig-secret
