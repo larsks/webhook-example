@@ -1,6 +1,6 @@
+import flask
 import hmac
 import logging
-from typing import Any
 
 SIGNATURE_HEADER = "X-Hub-Signature-256"
 LOG = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ class GithubSignatureVerifier:
     def __init__(self, secret: str):
         self.secret = secret.encode()
 
-    def verify_webhook_signature(self, request: Any) -> bool:
+    def verify_webhook_signature(self, request: flask.Request) -> bool:
         try:
             signature_header = request.headers[SIGNATURE_HEADER]
             signature_sha_name, request_signature = signature_header.split("=", 1)
