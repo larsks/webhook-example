@@ -64,6 +64,7 @@ def create_app(config_from_env=True, config=None):
             patchtext = ""
 
         repo = request.json["repository"]
+        sender = request.json["sender"]
 
         if request.headers["X-GitHub-Event"] == "ping":
             return {"status": "ping successful"}
@@ -78,7 +79,7 @@ def create_app(config_from_env=True, config=None):
                 ),
                 slack.SlackSectionBlock(
                     text=slack.SlackMarkdown(
-                        text=f"New commits have been pushed to <{repo['html_url']}|{repo['name']}>"
+                        text=f"New commits have been pushed to <{repo['html_url']}|{repo['name']}> by <{sender['url']}|{sender['login']}>"
                     )
                 ),
             ],
