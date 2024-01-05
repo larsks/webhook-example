@@ -1,4 +1,9 @@
-from dataclasses import dataclass, asdict, field
+'''Code for generating slack messages using the block api [1].
+
+[1]: https://api.slack.com/reference/block-kit/blocks
+'''
+
+from dataclasses import dataclass, asdict
 import requests
 import json
 import enum
