@@ -40,11 +40,6 @@ def create_app(config_from_env=True, config=None):
     else:
         app.verifier = github.GithubNullVerifier()
 
-    @app.errorhandler(ConfigurationError)
-    def log_config_error(err):
-        current_app.logger.error("configuration error: %s", err)
-        return "Service configuration error", 500
-
     @app.route("/hook/push", methods=["POST"])
     def handle_push_notification():
         try:
@@ -61,6 +56,12 @@ def create_app(config_from_env=True, config=None):
             patchtext = ""
 
         repo = request.json["repository"]
+
+        if request.headers["X-GitHub-Event"] == "ping":
+            return {"status": "ping successful"}
+
+        if request.headers["X-GitHub-Event"] != "push":
+            abort(400, "Unsupported event")
 
         message = slack.SlackMessage(
             blocks=[
@@ -84,16 +85,15 @@ def create_app(config_from_env=True, config=None):
             ],
         )
 
-        if "commits" in request.json:
-            commit_list = []
-            for commit in request.json["commits"]:
-                commit_list.append(f"- <{commit['url']}|{commit['id'][:10]}>")
+        commit_list = []
+        for commit in request.json.get("commits", []):
+            commit_list.append(f"- <{commit['url']}|{commit['id'][:10]}>")
 
-            message.blocks.append(
-                slack.SlackSectionBlock(
-                    text=slack.SlackMarkdown(text="\n".join(commit_list))
-                )
+        message.blocks.append(
+            slack.SlackSectionBlock(
+                text=slack.SlackMarkdown(text="\n".join(commit_list))
             )
+        )
 
         if current_app.notifier:
             try:
