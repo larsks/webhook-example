@@ -75,6 +75,11 @@ class SlackSectionBlock(SlackBlock):
     fields: list[SlackField] | None = None
     type: str = "section"
 
+@dataclass
+class SlackHeaderBlock(SlackBlock):
+    text: SlackText
+    type: str = "header"
+
 
 @dataclass
 class SlackDividerBlock(SlackBlock):
@@ -107,5 +112,5 @@ class SlackNotifier(jsonObject):
         res = requests.post(self.notify_url, json=content)
         try:
             res.raise_for_status()
-        except requests.exceptions.HTTPError as err:
+        except requests.exceptions.HTTPError:
             raise SlackException(res.text)
