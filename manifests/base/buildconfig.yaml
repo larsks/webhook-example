@@ -17,9 +17,6 @@ spec:
   strategy:
     dockerStrategy:
       dockerfilePath: Containerfile
-      from:
-        kind: DockerImage
-        name: docker.io/python:3
     type: Docker
   successfulBuildsHistoryLimit: 3
   triggers:
