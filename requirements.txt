@@ -2,6 +2,3 @@ flask
 gunicorn
 requests
 python-dotenv
-ansible_runner
-ansible
-GitPython
